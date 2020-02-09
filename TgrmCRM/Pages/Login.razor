@@ -1,0 +1,75 @@
+﻿@page "/login"
+@inject NavigationManager uriHelper
+
+<div class="container">
+    <div class="row">
+        <h3>Вход</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-3 input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Телефон</span>
+            </div>
+            <input type="tel" @bind="@tel" class="form-control" />
+        </div>
+        <div class="col-2">
+            <button style="margin-left: 10px" class="btn btn-primary btn-sm" type="submit" @onclick="@GetCode">Получить код</button>
+        </div>
+    </div>
+    @if (codeFetch)
+    {
+
+        <div class="row">
+            <div class="col-3 input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Код</span>
+                </div>
+                <input type="tel" @bind="@tgrmCode" class="form-control" />
+            </div>
+            <div class="col-2">
+                <button style="margin-left: 10px" class="btn btn-primary btn-sm" type="submit" @onclick="@Auth">Подтвердить</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="row" style="color:red">
+                @error
+            </div>
+        }
+
+    }
+</div>
+
+@code{
+    private string tel = "";
+
+    private string tgrmCode = "";
+
+    private bool codeFetch = false;
+    private string error = string.Empty;
+
+    async Task GetCode()
+    {
+        await TgrmAuth.Auth(tel);
+        codeFetch = true;
+    }
+
+    async Task Auth()
+    {
+        try
+        {
+            await TgrmAuth.EnterCode(tel, tgrmCode);
+            uriHelper.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message == "The numeric code used to authenticate does not match the numeric code sent by SMS/Telegram")
+            {
+                error = "Неверный код подтверждения";
+            }
+        }
+    }
+}
+

@@ -1,0 +1,14 @@
+﻿@page "/"
+@inject Microsoft.AspNetCore.Components.NavigationManager uriHelper
+
+@if (!TgrmAuth.IsAuthentificated)
+{
+    uriHelper.NavigateTo("login");
+}
+
+<h3>Главная</h3>
+
+@code{
+    //protected override OnAfterRenderAsync(bool firstRender)
+
+}
