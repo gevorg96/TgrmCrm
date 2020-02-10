@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @inject NavigationManager uriHelper
+@inject TgrmAuth tgrmAuth
 
 <div class="container">
     <div class="row">
@@ -52,7 +53,7 @@
 
     async Task GetCode()
     {
-        await TgrmAuth.Auth(tel);
+        await tgrmAuth.Auth(tel);
         codeFetch = true;
     }
 
@@ -60,7 +61,7 @@
     {
         try
         {
-            await TgrmAuth.EnterCode(tel, tgrmCode);
+            await tgrmAuth.EnterCode(tel, tgrmCode);
             uriHelper.NavigateTo("/");
         }
         catch (Exception ex)

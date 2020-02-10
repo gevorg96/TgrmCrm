@@ -1,0 +1,76 @@
+﻿@page "/contacts"
+@inject NavigationManager uriHelper
+@inject TgrmAuth tgrmAuth
+@inject IAccountService  service
+
+@if (!tgrmAuth.IsAuthentificated)
+{
+    uriHelper.NavigateTo("login");
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8"><h2>Аккаунты</h2></div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Телефон</th>
+                    <th scope="col">Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Account acc in accs)
+                {
+                    <tr id="@acc.Id">
+                        <td>@acc.Tels</td>
+                    </tr>
+                }
+                @if (addMode)
+                {
+                    <tr>
+                        <td><input type="tel" class="form-control" @bind="@telephone"></td>
+                        <td><button type="button" class="btn btn-primary" @onclick="AddRow">+</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    bool addMode = false;
+    IEnumerable<Account> accs;
+    string telephone;
+    int currentCount = 0;
+
+    protected override void OnInitialized()
+    {
+        if (tgrmAuth.IsAuthentificated)
+        {
+            RefreshList();
+        }
+    }
+
+    private void Add()
+    {
+        addMode = !addMode;
+    }
+
+    private async Task AddRow()
+    {
+        await service.Add(new Account { Tels = telephone });
+        addMode = !addMode;
+        RefreshList();
+    }
+
+    private void RefreshList()
+    {
+        accs = service.GetAll();
+    }
+}
