@@ -14,9 +14,9 @@ namespace TgrmCRM.Services
             context = db;
         }
 
-        public async Task Commit()
+        public void Commit()
         {
-            await context.SaveChangesAsync();
+            context.SaveChanges();
         }
     }
 }

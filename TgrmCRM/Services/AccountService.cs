@@ -15,29 +15,29 @@ namespace TgrmCRM.Services
         public async Task Add(Account entity)
         {
             await context.Accounts.AddAsync(entity);
-            await Commit();
+            Commit();
         }
 
         public async Task Add(IEnumerable<Account> entities)
         {
             await context.Accounts.AddRangeAsync(entities);
-            await Commit();
+            Commit();
         }
 
 
         public void Update(Account entity)
         {
             context.Accounts.Update(entity);
-            Commit().Wait();
+            Commit();
         }
 
-        public async Task Delete(long id)
+        public void Delete(long id)
         {
-            var acc = await context.Accounts.FindAsync(id);
+            var acc = context.Accounts.FirstOrDefault(p => p.Id == id);
             if (acc != null)
             {
                 context.Accounts.Remove(acc);
-                await Commit();
+                Commit();
             }
         }
 

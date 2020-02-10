@@ -29,13 +29,24 @@
                 {
                     <tr id="@acc.Id">
                         <td>@acc.Tels</td>
+                        <td>
+                            <a @onclick="@(e => Edit(acc.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
+                            <a @onclick="@(e => Delete(acc.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
+                        </td>
                     </tr>
                 }
                 @if (addMode)
                 {
                     <tr>
-                        <td><input type="tel" class="form-control" @bind="@telephone"></td>
+                        <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
                         <td><button type="button" class="btn btn-primary" @onclick="AddRow">+</button></td>
+                    </tr>
+                }
+                @if (editMode)
+                {
+                    <tr>
+                        <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
+                        <td><button type="button" class="btn btn-primary" @onclick="Update">+</button></td>
                     </tr>
                 }
             </tbody>
@@ -45,8 +56,9 @@
 
 @code {
     bool addMode = false;
+    bool editMode = false;
     IEnumerable<Account> accs;
-    string telephone;
+    Account acc = new Account();
     int currentCount = 0;
 
     protected override void OnInitialized()
@@ -64,13 +76,34 @@
 
     private async Task AddRow()
     {
-        await service.Add(new Account { Tels = telephone });
+        await service.Add(acc);
         addMode = !addMode;
         RefreshList();
+        acc  = new Account();
     }
 
     private void RefreshList()
     {
         accs = service.GetAll();
+    }
+
+    private void Edit(long Id)
+    {
+        acc = accs.First(p => p.Id == Id);
+        editMode = !editMode;
+    }
+
+    private void Update()
+    {
+        service.Update(acc);
+        editMode = !editMode;
+        acc = new Account();
+        RefreshList();
+    }
+
+    private void Delete(long id)
+    {
+        service.Delete(id);
+        RefreshList();
     }
 }

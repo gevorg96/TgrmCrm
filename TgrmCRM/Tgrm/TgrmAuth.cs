@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using TgrmCRM.Entities;
 using TLSchema;
 using TLSharp;
 
@@ -24,6 +26,16 @@ namespace TgrmCRM.Tgrm
         public async Task EnterCode(string tel, string code)
         {
             user = await client.MakeAuthAsync(tel, hash, code);
+        }
+
+        public Dictionary<Account, bool> GetActualStatuses(IEnumerable<Account> accs)
+        {
+            var statuses = new Dictionary<Account, bool>();
+            foreach (var acc in accs)
+            {
+                //client.
+            }
+            return statuses;
         }
     }
 }
