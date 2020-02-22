@@ -7,62 +7,64 @@
 {
     uriHelper.NavigateTo("login");
 }
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-8"><h2>Заказчики</h2></div>
-        <div class="col-sm-4">
-            <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8"><h2>Заказчики</h2></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">ЛПР</th>
+                        <th scope="col">Телефон</th>
+                        <th scope="col">Кол-во лидов</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Partner prt in prts)
+                    {
+                        <tr id="@prt.Id">
+                            <td>@prt.PartnerName</td>
+                            <td>@prt.DecisionMaker</td>
+                            <td>@prt.Tel</td>
+                            <td>0</td>
+                            @*<td></td>*@
+                            <td>
+                                <a @onclick="@(e => Edit(prt.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
+                                <a @onclick="@(e => Delete(prt.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
+                            </td>
+                        </tr>
+                    }
+                    @if (addMode)
+                    {
+                        <tr>
+                            <td><input type="text" class="form-control" @bind="@prt.PartnerName" /></td>
+                            <td><input type="text" class="form-control" @bind="@prt.DecisionMaker" /></td>
+                            <td><input type="tel" class="form-control" @bind="@prt.Tel" /></td>
+                            <td><button type="submit" class="btn btn-primary" @onclick="AddRow">+</button></td>
+                        </tr>
+                    }
+                    @if (editMode)
+                    {
+                        <tr>
+                            <td><input type="text" class="form-control" @bind="@prt.PartnerName" /></td>
+                            <td><input type="text" class="form-control" @bind="@prt.DecisionMaker" /></td>
+                            <td><input type="tel" class="form-control" @bind="@prt.Tel" /></td>
+                            <td><button type="submit" class="btn btn-primary" @onclick="Update">+</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Наименование</th>
-                    <th scope="col">ЛПР</th>
-                    <th scope="col">Телефон</th>
-                    <th scope="col">Кол-во лидов</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (Partner prt in prts)
-                {
-                    <tr id="@prt.Id">
-                        <td>@prt.PartnerName</td>
-                        <td>@prt.DecisionMaker</td>
-                        <td>@prt.Tel</td>
-                        <td>0</td>
-                        @*<td></td>*@
-                        <td>
-                            <a @onclick="@(e => Edit(prt.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
-                            <a @onclick="@(e => Delete(prt.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
-                        </td>
-                    </tr>
-                }
-                @if (addMode)
-                {
-            <tr>
-                    <td><input type="text" class="form-control" @bind="@prt.PartnerName" /></td>
-                    <td><input type="text" class="form-control" @bind="@prt.DecisionMaker" /></td>
-                    <td><input type="tel" class="form-control" @bind="@prt.Tel" /></td>
-                    <td><button type="submit" class="btn btn-primary" @onclick="AddRow">+</button></td>
-            </tr>
-                }
-                @if (editMode)
-                {
-            <tr>
-                    <td><input type="text" class="form-control" @bind="@prt.PartnerName" /></td>
-                    <td><input type="text" class="form-control" @bind="@prt.DecisionMaker" /></td>
-                    <td><input type="tel" class="form-control" @bind="@prt.Tel" /></td>
-                    <td><button type="submit" class="btn btn-primary" @onclick="Update">+</button></td>
-            </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
 
+}
 @code {
     bool addMode = false;
     bool editMode = false;

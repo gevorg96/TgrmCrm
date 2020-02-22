@@ -7,52 +7,55 @@
 {
     uriHelper.NavigateTo("login");
 }
-
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-8"><h2>Аккаунты</h2></div>
-        <div class="col-sm-4">
-            <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8"><h2>Аккаунты</h2></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Телефон</th>
+                        <th scope="col">Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Account acc in accs)
+                    {
+                        <tr id="@acc.Id">
+                            <td>@acc.Tels</td>
+                            <td>
+                                <a @onclick="@(e => Edit(acc.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
+                                <a @onclick="@(e => Delete(acc.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
+                            </td>
+                        </tr>
+                    }
+                    @if (addMode)
+                    {
+                        <tr>
+                            <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
+                            <td><button type="button" class="btn btn-primary" @onclick="AddRow">+</button></td>
+                        </tr>
+                    }
+                    @if (editMode)
+                    {
+                        <tr>
+                            <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
+                            <td><button type="button" class="btn btn-primary" @onclick="Update">+</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Телефон</th>
-                    <th scope="col">Статус</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (Account acc in accs)
-                {
-                    <tr id="@acc.Id">
-                        <td>@acc.Tels</td>
-                        <td>
-                            <a @onclick="@(e => Edit(acc.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
-                            <a @onclick="@(e => Delete(acc.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
-                        </td>
-                    </tr>
-                }
-                @if (addMode)
-                {
-                    <tr>
-                        <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
-                        <td><button type="button" class="btn btn-primary" @onclick="AddRow">+</button></td>
-                    </tr>
-                }
-                @if (editMode)
-                {
-                    <tr>
-                        <td><input type="tel" class="form-control" @bind="@acc.Tels" /></td>
-                        <td><button type="button" class="btn btn-primary" @onclick="Update">+</button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+
+}
+
 
 @code {
     bool addMode = false;
@@ -79,7 +82,7 @@
         await service.Add(acc);
         addMode = !addMode;
         RefreshList();
-        acc  = new Account();
+        acc = new Account();
     }
 
     private void RefreshList()
