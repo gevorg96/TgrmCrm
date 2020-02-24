@@ -16,17 +16,20 @@ namespace TgrmCRM.Services
         public async Task Add(MessageAnswer entity)
         {
             await context.MessageAnswers.AddAsync(entity);
+            Commit();
         }
 
         public async Task Add(IEnumerable<MessageAnswer> entities)
         {
             await context.MessageAnswers.AddRangeAsync(entities);
+            Commit();
         }
 
 
         public void Update(MessageAnswer entity)
         {
             context.MessageAnswers.Update(entity);
+            Commit();
         }
 
         public async Task Delete(long id)
@@ -35,6 +38,7 @@ namespace TgrmCRM.Services
             if (acc != null)
             {
                 context.MessageAnswers.Remove(acc);
+                Commit();
             }
         }
 

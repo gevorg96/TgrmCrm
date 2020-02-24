@@ -15,17 +15,20 @@ namespace TgrmCRM.Services
         public async Task Add(ContactPartner entity)
         {
             await context.ContactPartners.AddAsync(entity);
+            Commit();
         }
 
         public async Task Add(IEnumerable<ContactPartner> entities)
         {
             await context.ContactPartners.AddRangeAsync(entities);
+            Commit();
         }
 
 
         public void Update(ContactPartner entity)
         {
             context.ContactPartners.Update(entity);
+            Commit();
         }
 
         public async Task Delete(long id)
@@ -34,6 +37,7 @@ namespace TgrmCRM.Services
             if (acc != null)
             {
                 context.ContactPartners.Remove(acc);
+                Commit();
             }
         }
 

@@ -14,5 +14,6 @@ namespace TgrmCRM.Services.Interfaces
         public IEnumerable<ThemeMessage> GetAll();
         public ThemeMessage Get(long id);
         public IEnumerable<ThemeMessage> Get(Func<ThemeMessage, bool> criteria);
+        public IEnumerable<Contact> GetContactsFromAcc(Account acc);
     }
 }

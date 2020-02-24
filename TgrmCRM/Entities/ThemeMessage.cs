@@ -10,5 +10,6 @@ namespace TgrmCRM.Entities
         public long Id { get; set; }
         public string Body { get; set; }
         public DateTime DateAdd { get; set; }
+        public Account Account { get; set; }
     }
 }

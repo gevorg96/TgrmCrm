@@ -1,15 +1,110 @@
 ﻿@page "/sents"
 @inject Microsoft.AspNetCore.Components.NavigationManager uriHelper
 @inject TgrmAuth tgrmAuth
+@inject IAccountService accountService
+@inject IContactService contactService
+@inject IThemeMessageService themeMessageService
 
 @if (!tgrmAuth.IsAuthentificated)
 {
     uriHelper.NavigateTo("login");
 }
-
-<h3>Рассылки</h3>
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>Рассылки</h2>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-3">
+                <h6>Текст рассылки</h6>
+            </div>
+            <div class="col-9">
+                <textarea cols="70" rows="6" @bind="sentMessage"></textarea>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-5">
+                <h5>Положительные кл.слова</h5>
+            </div>
+            <div class="col-6">
+                <h5>Негативные кл.слова</h5>
+            </div>
+        </div>
+        <div class="row">
+            <SimpleTableComponent Keys="positiveKeys" />
+            <br />
+            <SimpleTableComponent Keys="negativeKeys" />
+            <br />
+        </div>
+        <br />
+        <div class="row">
+            <h5>Файл с контактами</h5>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <InputFile multiple OnChange="HandleFileSelected" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Аккаунт</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01" @bind="selectedAccount">
+                    <option selected>...</option>
+                    @foreach (var account in accounts)
+                    {
+                        <option value="@account.Id">@account.Tels</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-info" @onclick="Add"><i class="fa fa-plus"></i> Добавить</button>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
+    private List<string> positiveKeys = new List<string>();
+    private List<string> negativeKeys = new List<string>();
+    private string sentMessage = string.Empty;
+    private IFileListEntry file;
+    private List<Account> accounts;
+    private string selectedAccount;
 
+    protected override void OnInitialized()
+    {
+        accounts = accountService.GetAll().ToList();
+    }
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        using (var reader = new System.IO.StreamReader(file.Data))
+        {
+            var data = await reader.ReadToEndAsync();
+            if (data != null)
+            {
+                var users = JsonConvert.DeserializeObject<List<UserTL>>(data);
+            }
+        }
+    }
+
+    private async Task Add()
+    {
+
+    }
 }
 

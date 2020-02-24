@@ -13,6 +13,7 @@ namespace TgrmCRM
         public DbSet<ContactsMessages> ContactsMessages { get; set; }
         public DbSet<ThemeMessage> ThemeMessages { get; set; }
         public DbSet<MessageAnswer> MessageAnswers { get; set; }
+        public DbSet<KeyAnswer> KeyAnswers { get; set; }
         public TgrmDbContext()
         {
             Database.EnsureCreated();

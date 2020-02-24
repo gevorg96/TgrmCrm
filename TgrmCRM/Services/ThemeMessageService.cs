@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,16 +17,19 @@ namespace TgrmCRM.Services
         public async Task Add(ThemeMessage entity)
         {
             await context.ThemeMessages.AddAsync(entity);
+            Commit();
         }
 
         public async Task Add(IEnumerable<ThemeMessage> entities)
         {
             await context.ThemeMessages.AddRangeAsync(entities);
+            Commit();
         }
 
         public void Update(ThemeMessage entity)
         {
             context.ThemeMessages.Update(entity);
+            Commit();
         }
 
         public async Task Delete(long id)
@@ -33,6 +38,7 @@ namespace TgrmCRM.Services
             if (acc != null)
             {
                 context.ThemeMessages.Remove(acc);
+                Commit();
             }
         }
 
@@ -49,6 +55,15 @@ namespace TgrmCRM.Services
         public IEnumerable<ThemeMessage> GetAll()
         {
             return context.ThemeMessages.ToList();
+        }
+
+        public IEnumerable<Contact> GetContactsFromAcc(Account acc)
+        {
+            return context.ContactsMessages
+                .Include(contMess => contMess.Message)
+                    .ThenInclude(mess => mess.Account)
+                .Where(mess => mess.Message.Account == acc)
+                .Select(mess => mess.Contact).ToList();
         }
     }
 }
