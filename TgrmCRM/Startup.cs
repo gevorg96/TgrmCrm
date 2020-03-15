@@ -34,10 +34,11 @@ namespace TgrmCRM
             services.AddScoped<IMessageAnswerService, MessageAnswerService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IThemeMessageService, ThemeMessageService>();
+            services.AddScoped<IKeyAnswerService, KeyAnswerService>();
 
             var sp = services.BuildServiceProvider();
-            var job = new RecieveUpdateJob(sp.GetRequiredService<IAccountService>(), sp.GetRequiredService<IAnswerService>(), sp.GetRequiredService<IMessageAnswerService>(), sp.GetRequiredService<IThemeMessageService>());
-            job.CheckUpdates();
+            RecieveUpdateJob.Init(sp.GetRequiredService<IAccountService>(), sp.GetRequiredService<IAnswerService>(), sp.GetRequiredService<IMessageAnswerService>(), sp.GetRequiredService<IThemeMessageService>());
+            RecieveUpdateJob.CheckUpdates();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

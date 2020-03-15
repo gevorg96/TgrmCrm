@@ -10,7 +10,7 @@ namespace TgrmCRM.Services.Interfaces
         public Task Add(KeyAnswer entity);
         public Task Add(IEnumerable<KeyAnswer> entities);
         public void Update(KeyAnswer entity);
-        public void Delete(long id);
+        public Task Delete(long id);
         public IEnumerable<KeyAnswer> GetAll();
         public KeyAnswer Get(long id);
         public IEnumerable<KeyAnswer> Get(Func<KeyAnswer, bool> criteria);

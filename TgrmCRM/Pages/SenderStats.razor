@@ -2,7 +2,7 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager uriHelper
 @inject TgrmAuth tgrmAuth
 
-@if (!tgrmAuth.IsAuthentificated)
+@if (!TgrmAuth.IsAuthentificated)
 {
     uriHelper.NavigateTo("login");
 }

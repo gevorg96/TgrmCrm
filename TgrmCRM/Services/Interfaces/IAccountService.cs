@@ -14,5 +14,7 @@ namespace TgrmCRM.Services.Interfaces
         public IEnumerable<Account> GetAll();
         public Account Get(long id);
         public IEnumerable<Account> Get(Func<Account, bool> criteria);
+
+        public bool IsAdmin(string number);
     }
 }

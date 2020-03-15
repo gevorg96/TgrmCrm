@@ -10,5 +10,6 @@ namespace TgrmCRM.Entities
 
         public long TgrmId { get; set; }
         public DateTime DateAdd { get; set; }
+        public long Hash { get; set; }
     }
 }

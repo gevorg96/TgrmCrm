@@ -55,5 +55,15 @@ namespace TgrmCRM.Services
         {
             return context.Accounts.ToList();
         }
+
+        public bool IsAdmin(string number)
+        {
+            var f = context.Accounts.FirstOrDefault(p => p.Tels == number);
+            if (f == null || f.Role != 1)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -4,8 +4,10 @@
 @inject IAccountService accountService
 @inject IContactService contactService
 @inject IThemeMessageService themeMessageService
+@inject IKeyAnswerService keyAnswerService
+@inject IContactsMessageService contactsMessageService
 
-@if (!tgrmAuth.IsAuthentificated)
+@if (!TgrmAuth.IsAuthentificated)
 {
     uriHelper.NavigateTo("login");
 }
@@ -86,25 +88,51 @@ else
 
     protected override void OnInitialized()
     {
-        accounts = accountService.GetAll().ToList();
+        accounts = accountService.GetAll().Where(p => p.Role != 1 && p.isActive).ToList();
     }
+
+    List<UserTL> users = new List<UserTL>();
+    List<string> userNames = new List<string>();
 
     async Task HandleFileSelected(IFileListEntry[] files)
     {
         file = files.FirstOrDefault();
+
         using (var reader = new System.IO.StreamReader(file.Data))
         {
-            var data = await reader.ReadToEndAsync();
-            if (data != null)
+            if (file.Name.EndsWith(".txt"))
             {
-                var users = JsonConvert.DeserializeObject<List<UserTL>>(data);
+
+                try
+                {
+                    var str = await reader.ReadLineAsync();
+                    while (!string.IsNullOrEmpty(str))
+                    {
+                        userNames.Add(str);
+                        str = await reader.ReadLineAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
+            }
+            if (file.Name.EndsWith(".json"))
+            {
+                var data = await reader.ReadToEndAsync();
+                if (data != null)
+                {
+                    users = JsonConvert.DeserializeObject<List<UserTL>>(data);
+                }
             }
         }
     }
 
     private async Task Add()
     {
-
+        var sender = new TgrmSender(tgrmAuth, contactService, themeMessageService, accountService, keyAnswerService, contactsMessageService);
+        var result = await sender.MakeSents(users.ToList(), userNames, sentMessage, positiveKeys, negativeKeys, accounts.FirstOrDefault(p => p.Id == Int64.Parse(selectedAccount)).Tels);
     }
 }
 

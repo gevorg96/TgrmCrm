@@ -3,13 +3,43 @@
 @inject TgrmAuth tgrmAuth
 @inject IAccountService  service
 
-@if (!tgrmAuth.IsAuthentificated)
+@if (!TgrmAuth.IsAuthentificated)
 {
     uriHelper.NavigateTo("login");
 }
 else
 {
     <div class="container">
+        <div class="modal fade" id="AuthModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Авторизация</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5 input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Код</span>
+                                </div>
+                                <input type="tel" @bind="@tgrmCode" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row" style="color:red">
+                            @message
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                        <button type="button" @onclick="@(async e => await AuthEnd())" class="btn btn-primary">Ок</button>
+                        <p>@text</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-8"><h2>Аккаунты</h2></div>
             <div class="col-sm-4">
@@ -22,6 +52,7 @@ else
                     <tr>
                         <th scope="col">Телефон</th>
                         <th scope="col">Действия</th>
+                        <th scope="col">Статус</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,6 +63,19 @@ else
                             <td>
                                 <a @onclick="@(e => Edit(acc.Id))" style="cursor:pointer" class="edit" title="" data-toggle="tooltip" data-original-title="Edit"><i class="material-icons">edit</i></a>
                                 <a @onclick="@(e => Delete(acc.Id))" style="cursor:pointer" class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i class="material-icons">delete</i></a>
+                            </td>
+                            <td>
+                                @if (acc.isActive)
+                                {
+                                    <a style="cursor:pointer" title="" data-toggle="tooltip"><i class="material-icons">done_outline</i></a>
+                                }
+                                else
+                                {
+                                    <a style="cursor:pointer" data-toggle="tooltip"><i class="material-icons">error_outline</i></a>
+                                    <button  @onclick="@(async e => await Auth(acc.Id))" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AuthModal">
+                                        Войти
+                                    </button>
+                                }
                             </td>
                         </tr>
                     }
@@ -53,7 +97,6 @@ else
             </table>
         </div>
     </div>
-
 }
 
 
@@ -64,10 +107,17 @@ else
     Account acc = new Account();
     int currentCount = 0;
 
+    string telephone = "";
+    string tgrmCode = "";
+    string text = "";
+    string message = "";
+
+
     protected override void OnInitialized()
     {
-        if (tgrmAuth.IsAuthentificated)
+        if (TgrmAuth.IsAuthentificated)
         {
+            tgrmAuth.UpdateDbStatus();
             RefreshList();
         }
     }
@@ -87,7 +137,7 @@ else
 
     private void RefreshList()
     {
-        accs = service.GetAll();
+        accs = service.GetAll().Where(p => p.Role == 0).ToList();
     }
 
     private void Edit(long Id)
@@ -108,5 +158,43 @@ else
     {
         service.Delete(id);
         RefreshList();
+    }
+
+    private (TelegramClient, string) hashTgrm;
+
+    private async Task Auth(long id)
+    {
+        acc = accs.First(p => p.Id == id);
+        var t = await tgrmAuth.AuthSecondary(acc.Tels);
+        if (t.HasValue)
+        {
+            hashTgrm = t.Value;
+        }
+        else
+        {
+            message = "Невозможно войти в аккаунт";
+        }
+        StateHasChanged();
+    }
+
+    private async Task AuthEnd()
+    {
+        try
+        {
+            await tgrmAuth.EnterCodeSecondary(acc.Tels, tgrmCode, hashTgrm.Item1, hashTgrm.Item2);
+            message = "Ok!";
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+            var a = service.Get(acc.Id);
+            a.isActive = true;
+            service.Update(a);
+            message = "";
+            acc = new Account();
+            StateHasChanged();
+        }
     }
 }

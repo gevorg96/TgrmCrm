@@ -3,7 +3,7 @@
 @inject TgrmAuth tgrmAuth
 @inject IPartnerService service
 
-@if (!tgrmAuth.IsAuthentificated)
+@if (!TgrmAuth.IsAuthentificated)
 {
     uriHelper.NavigateTo("login");
 }
@@ -75,7 +75,7 @@ else
 
     protected override void OnInitialized()
     {
-        if (tgrmAuth.IsAuthentificated)
+        if (TgrmAuth.IsAuthentificated)
         {
             RefreshList();
         }
