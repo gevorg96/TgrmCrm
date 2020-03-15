@@ -16,13 +16,11 @@ namespace TgrmCRM
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseKestrel((context, options) =>
+                    webBuilder
+                    .UseStartup<Startup>()
+                    .UseKestrel(options =>
                     {
-                        var port = Environment.GetEnvironmentVariable("PORT");
-                        if (!string.IsNullOrEmpty(port))
-                        {
-                            options.ListenAnyIP(int.Parse(port));
-                        }
+                        options.ListenAnyIP(Int32.Parse(System.Environment.GetEnvironmentVariable("PORT")));
                     });
                 });
     }
